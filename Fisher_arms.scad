@@ -3,11 +3,12 @@
 // see www.rouzeau.net/Print3D/FisherModifications for details
 //first issue 3 sept 2015
 //rev 0.1 - 4 sept 2015 - option for PLA, insertion gouge - 
+//rev 0.2 - 4 sept 2015 - added insertion channel - 
 include <PRZutility.scad>
 
 diamball = 5.97; // real ball diameter
 isPLA = false; // while set true, reduce width to reduce spring effect
-sets = 6; // set number
+sets = 1; // set number
 //isPLA = true;
 //*
 duply (12.5,sets-1) { // display the ends, duplicate as required
@@ -40,16 +41,21 @@ module rodend(simple=true) {
     } //::: Then whats removed :::
     tsl (0,0,3.5) // help gouge for insertion on ball
       dmirrory () dmirrorz() 
-        cconey (10,5,1.5,-0.5, 0,1,8);
+        cconey (11,6,1.5,-0.5, 0,1,8);
     tsl (38.5,0,0)    // bottom cut
       rot (0,-1.8) cubez (46,8,-2, -23);  
     cubez (24,2.3,12,  5,0,-2); //fork middle removal
-    dmirrory() // sphere shaping
+    dmirrory() { // sphere shaping
       tsl (0,0.6,3.5)
          difference () {
            sphere (d=diamball+0.22, $fn=60);   
            cubey (10,5,10);
-         }   
+        }   
+      difference () { // channel for easy introduction on ball
+        cylz (-6, 66, 0,1.3,0, 40);
+        cubey (10,5,99);
+      }   
+    }     
     if (simple) // hole to screw in for simple end
       cylx (2.55, 30, 25,0,3.5);    
     else {
