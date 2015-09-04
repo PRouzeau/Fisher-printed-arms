@@ -1,17 +1,23 @@
 //Printed arms ends for RepRapPro Fisher delta printer
 //Licence OSH V1.2 - (c)2015 Pierre ROUZEAU aka PRZ 
 // see www.rouzeau.net/Print3D/FisherModifications for details
+//first issue 3 sept 2015
+//rev 0.1 - 4 sept 2015 - option for PLA, insertion gouge - 
 include <PRZutility.scad>
 
 diamball = 5.97; // real ball diameter
-
+isPLA = false; // while set true, reduce width to reduce spring effect
+sets = 6; // set number
+//isPLA = true;
 //*
-duply (12.5,5) { // display the ends
-  tsl (48) rot (0,1.8) rodend();
+duply (12.5,sets-1) { // display the ends, duplicate as required
+  tsl (48) rot (0,1.8) rodend(true);
   rot (0,1.8) rodend(false);
 } //*/
 
 module rodend(simple=true) {
+  forkwd = isPLA?8:9.5; // to adapt the fork width to material stifness
+  forkrad = 1.25; // radius of the 'fork' root 
   nutspace = 28; // position of the compression nut
   difference() {
     union(){
@@ -20,21 +26,24 @@ module rodend(simple=true) {
          tsl (38.5,0,1.75)    
           rot (0,-1.8) cubex (-42,4.5,3.5);     
         if (!simple)
-          rot (0,-1.8) cubez (6.5,9,7.5,   nutspace, 0,-1.23); 
+          rot (0,-1.8) cubez (6.5,9,7.5,  nutspace, 0,-1.23); 
       }
       hull() { // fork shape
-        cyly (-9.5, 7.6, 0,0,3.5); 
-        cylx (7,-1, 38.5,0,3.5);
+        cyly (-9.5, 7.6,    0,0,3.5); 
+        cylx (7,-1,      38.5,0,3.5);
         tsl (17,0,3.5)
-          dmirrory() dmirrorz ()
-            cylx (2.5,1, 0,3.5,3);
+          dmirrory() dmirrorz()
+            cylx (2*forkrad,1,  0,forkwd/2-forkrad,3);
         tsl (38.5,0,1.75)    
           rot (0,-1.8) cubex (-42,6,3.5);       
       }
     } //::: Then whats removed :::
+    tsl (0,0,3.5) // help gouge for insertion on ball
+      dmirrory () dmirrorz() 
+        cconey (10,5,1.5,-0.5, 0,1,8);
     tsl (38.5,0,0)    // bottom cut
       rot (0,-1.8) cubez (46,8,-2, -23);  
-    cubez (24,2.3,12, 5,0,-2); //fork middle removal
+    cubez (24,2.3,12,  5,0,-2); //fork middle removal
     dmirrory() // sphere shaping
       tsl (0,0.6,3.5)
          difference () {
